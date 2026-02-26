@@ -32,8 +32,9 @@ services:
 frontend:
   build:
     context: ./frontend
+    dockerfile: Dockerfile
     args:
-      NEXT_PUBLIC_API_URL: https://api.vjlink-edu.online
+      NEXT_PUBLIC_API_URL: "https://api.vjlink-edu.online"
   container_name: jft-frontend
   restart: always
   depends_on:
