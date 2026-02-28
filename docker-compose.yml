@@ -17,7 +17,7 @@ services:
       - jft-network
 
   backend:
-    build: ./backend
+    build: ../jft/backend
     container_name: jft-backend
     restart: always
     mem_limit: 768m
@@ -31,9 +31,11 @@ services:
       NODE_OPTIONS: --max-old-space-size=640
     networks:
       - jft-network
+    ports:
+      - "3000:3000"
   frontend:
     build:
-      context: ./frontend
+      context: ../jft/frontend
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: "https://api.vjlink-edu.online"
@@ -48,10 +50,7 @@ services:
     networks:
       - jft-network
     ports:
-    networks:
-    - jft-network
-  ports:
-    - "3001:3000"
+      - "3001:3000"
 
 volumes:
   postgres_data:
