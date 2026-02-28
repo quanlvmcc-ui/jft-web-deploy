@@ -5,6 +5,8 @@ services:
     image: postgres:15
     container_name: jft-postgres
     restart: always
+    mem_limit: 512m
+    mem_reservation: 256m
     environment:
       POSTGRES_USER: jftuser
       POSTGRES_PASSWORD: jftpassword
@@ -18,28 +20,35 @@ services:
     build: ./backend
     container_name: jft-backend
     restart: always
+    mem_limit: 768m
+    mem_reservation: 384m
     depends_on:
       - postgres
     environment:
       DATABASE_URL: postgresql://jftuser:jftpassword@postgres:5432/jftdb
       JWT_SECRET: super_secret_key_change_this
       NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=640
+    networks:
+      - jft-network
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "https://api.vjlink-edu.online"
+    container_name: jft-frontend
+    restart: always
+    mem_limit: 512m
+    mem_reservation: 256m
+    depends_on:
+      - backend
+    environment:
+      NODE_OPTIONS: --max-old-space-size=384
     networks:
       - jft-network
     ports:
-      - "3000:3000"
-
-frontend:
-  build:
-    context: ./frontend
-    dockerfile: Dockerfile
-    args:
-      NEXT_PUBLIC_API_URL: "https://api.vjlink-edu.online"
-  container_name: jft-frontend
-  restart: always
-  depends_on:
-    - backend
-  networks:
+    networks:
     - jft-network
   ports:
     - "3001:3000"
