@@ -1,0 +1,29 @@
+# PostgreSQL Backup Cron Job
+# Chạy backup mỗi ngày lúc 2:00 AM
+#
+# Cài đặt:
+# 1. crontab -e
+# 2. Copy dòng dưới vào (thay đổi path cho đúng)
+# 3. Lưu và thoát
+#
+# Kiểm tra:
+# - crontab -l (xem cron jobs)
+# - tail -f /var/log/postgres-backup.log (xem log)
+
+# Backup mỗi ngày lúc 2:00 AM
+0 2 * * * /home/your-user/jft-deploy/scripts/backup-database.sh >> /var/log/postgres-backup.log 2>&1
+
+# Giải thích cú pháp cron:
+# ┌───────────── phút (0 - 59)
+# │ ┌───────────── giờ (0 - 23)
+# │ │ ┌───────────── ngày trong tháng (1 - 31)
+# │ │ │ ┌───────────── tháng (1 - 12)
+# │ │ │ │ ┌───────────── ngày trong tuần (0 - 6) (0 = Sunday)
+# │ │ │ │ │
+# │ │ │ │ │
+# * * * * * command
+
+# Các ví dụ khác:
+# 0 */6 * * *     # Mỗi 6 giờ
+# 0 0 * * 0       # Chủ nhật hàng tuần lúc 12:00 AM
+# 0 3 1 * *       # Ngày đầu tháng lúc 3:00 AM
