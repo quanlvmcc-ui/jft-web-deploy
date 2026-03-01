@@ -29,6 +29,7 @@ services:
       JWT_SECRET: super_secret_key_change_this
       NODE_ENV: production
       NODE_OPTIONS: --max-old-space-size=640
+
     networks:
       - jft-network
     ports:
@@ -39,16 +40,13 @@ services:
       context: ../jft/frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: "https://api.vjlink-edu.online"
+        NEXT_PUBLIC_API_URL: https://api.vjlink-edu.online
     container_name: jft-frontend
     restart: always
     mem_limit: 512m
     mem_reservation: 256m
     depends_on:
       - backend
-    environment:
-      NODE_ENV: production
-      NODE_OPTIONS: --max-old-space-size=384
     networks:
       - jft-network
     ports:
