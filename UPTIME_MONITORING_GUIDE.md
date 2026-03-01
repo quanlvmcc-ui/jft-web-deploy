@@ -1,9 +1,9 @@
 # 📊 UptimeRobot Monitoring Setup Guide
 
-**Status:** Production-ready  
-**Time:** 20 minutes setup  
-**Difficulty:** Easy  
-**Cost:** FREE (lên đến 50 monitors)  
+**Status:** Production-ready
+**Time:** 20 minutes setup
+**Difficulty:** Easy
+**Cost:** FREE (lên đến 50 monitors)
 
 ---
 
@@ -13,11 +13,11 @@
 
 UptimeRobot là dịch vụ **monitoring uptime** (giám sát thời gian hoạt động) của website/API. Nó sẽ:
 
-✅ **Ping website mỗi 5 phút** (hoặc tùy chỉnh)  
-✅ **Alert ngay khi service down** (qua Email, SMS, Telegram, Slack...)  
-✅ **Track uptime percentage** (99.9% uptime = bao nhiêu phút down)  
-✅ **Hiển thị status page** công khai cho user  
-✅ **Free 100%** cho tối đa 50 monitors  
+✅ **Ping website mỗi 5 phút** (hoặc tùy chỉnh)
+✅ **Alert ngay khi service down** (qua Email, SMS, Telegram, Slack...)
+✅ **Track uptime percentage** (99.9% uptime = bao nhiêu phút down)
+✅ **Hiển thị status page** công khai cho user
+✅ **Free 100%** cho tối đa 50 monitors
 
 ---
 
@@ -46,16 +46,19 @@ Nếu FAIL 2 lần liên tiếp:
 ### **Bước 1: Tại sao cần Monitoring?**
 
 **Vấn đề:**
+
 - Backend crash nhưng không ai biết → User báo mới biết (mất uy tín)
 - VPS hết RAM → Service down vài giờ → Mất doanh thu
 - SSL certificate hết hạn → HTTPS không hoạt động
 
 **Giải pháp:**
+
 - UptimeRobot ping liên tục → Biết ngay khi down
 - Alert tức thì → Team react nhanh (< 5 phút)
 - Track uptime → Báo cáo management (SLA 99.9%)
 
 **Ví dụ thực tế:**
+
 ```
 02:15 AM: Backend crash do hết RAM
 02:16 AM: UptimeRobot phát hiện (ping lần 1 fail)
@@ -66,6 +69,7 @@ Nếu FAIL 2 lần liên tiếp:
 ```
 
 **Không có monitoring:**
+
 ```
 02:15 AM: Backend crash
 08:00 AM: User đầu tiên vào web → báo lỗi (5h45p sau!)
@@ -95,6 +99,7 @@ async checkHealth() {
 ```
 
 **Endpoint này:**
+
 - ✅ Trả về HTTP 200 nếu server OK
 - ✅ Không cần authentication (public access)
 - ✅ Check database connection (optional)
@@ -102,6 +107,7 @@ async checkHealth() {
 - ✅ Không bị rate limit (có @SkipThrottle)
 
 **Test:**
+
 ```bash
 curl https://backend.vjlink-edu.online/health
 
@@ -120,23 +126,28 @@ curl https://backend.vjlink-edu.online/health
 **1. Monitor Type: HTTP(s)**
 
 UptimeRobot gửi HTTP GET request:
+
 ```
 GET https://backend.vjlink-edu.online/health
 ```
 
 **2. Check Response:**
+
 - **Status code = 200** → UP ✅
 - **Status code != 200** (404, 500, timeout) → DOWN ❌
 
 **3. Keyword Monitoring (Optional):**
+
 ```json
 Response body phải chứa: "ok"
 ```
+
 - Nếu response = `{"status": "ok"}` → UP ✅
 - Nếu response = `{"status": "error"}` → DOWN ❌
 - Nếu response = HTML error page → DOWN ❌
 
 **4. Response Time Monitoring:**
+
 - < 1s → Fast ⚡
 - 1-2s → Normal 🟡
 - > 2s → Slow 🟠
@@ -146,7 +157,7 @@ Response body phải chứa: "ok"
 
 ```
 Ping #1: FAIL (02:15 AM)
-  ↓ 
+  ↓
 Chờ 1 phút
   ↓
 Ping #2: FAIL (02:16 AM)
@@ -155,6 +166,7 @@ CONFIRM DOWN → GỬI ALERT
 ```
 
 Tại sao chờ 2 lần?
+
 - Tránh **false positive** (ping fail do network hiccup tạm thời)
 - VPS có thể đang restart (10-20 giây)
 - Chỉ alert khi CHẮC CHẮN down
@@ -171,6 +183,7 @@ Tại sao chờ 2 lần?
 4. Verify email
 
 **Free Plan bao gồm:**
+
 - ✅ 50 monitors
 - ✅ 5-minute intervals
 - ✅ 2 months of logs
@@ -194,6 +207,7 @@ Monitor Type: HTTP(s)
 ```
 
 **Giải thích:**
+
 - **HTTP(s):** Check website/API qua HTTP request
 - **Ping:** Chỉ check server có online không (không check app)
 - **Port:** Check port cụ thể (3000, 5432...)
@@ -210,6 +224,7 @@ Monitoring Interval: 5 minutes (Free plan)
 ```
 
 **Giải thích:**
+
 - **Friendly Name:** Tên hiển thị (đặt dễ nhận biết)
 - **URL:** Endpoint /health đã tạo trong backend
 - **Interval:** Mỗi 5 phút ping 1 lần (Free = 5 min, Paid = 1 min)
@@ -226,15 +241,18 @@ Monitoring Interval: 5 minutes (Free plan)
 **Giải thích từng option:**
 
 **Monitor Timeout (30s):**
+
 - Nếu request > 30s không trả về → COUNT DOWN
 - Backend bình thường response < 500ms
 - 30s là buffer đủ cho slow network
 
 **Request Method (GET):**
+
 - GET = chỉ đọc, không thay đổi data
 - POST/PUT không phù hợp cho health check
 
 **Keyword "ok":**
+
 - Check response body có chứa text "ok"
 - Tăng độ chính xác:
   - Nếu backend trả 200 nhưng response lỗi → DOWN
@@ -242,6 +260,7 @@ Monitoring Interval: 5 minutes (Free plan)
   - Chỉ khi response có "ok" → mới UP
 
 **Keyword Type "Exists":**
+
 - **Exists:** Response phải CHỨA "ok"
 - **Not Exists:** Response KHÔNG được chứa "error"
 
@@ -268,6 +287,7 @@ Monitor #3:
 ```
 
 **Tại sao Frontend không cần keyword?**
+
 - Frontend = static HTML/JS → khó xác định keyword chung
 - Chỉ cần check HTTP 200 là đủ
 - Backend mới cần keyword vì có specific response format
@@ -287,10 +307,12 @@ E-mail to Alert: your-email@example.com
 ```
 
 **Giải thích:**
+
 - **Down:** Gửi email khi service DOWN
 - **Up:** Gửi email khi service UP trở lại (để biết đã fix xong)
 
 **Email sample:**
+
 ```
 Subject: [DOWN] JFT Backend Health is DOWN
 
@@ -306,6 +328,7 @@ View details: https://uptimerobot.com/...
 **4.3. Add Telegram Alert (Optional - Khuyến nghị)**
 
 **Tại sao Telegram?**
+
 - ✅ Nhận alert NGAY LẬP TỨC (faster than email)
 - ✅ Mobile notification → không bỏ lỡ
 - ✅ Có thể reply ngay trong chat
@@ -314,6 +337,7 @@ View details: https://uptimerobot.com/...
 **Setup Telegram:**
 
 **Step 1:** Tạo Bot Telegram
+
 ```
 1. Mở Telegram
 2. Search: @BotFather
@@ -324,6 +348,7 @@ View details: https://uptimerobot.com/...
 ```
 
 **Step 2:** Get Chat ID
+
 ```
 1. Start chat với bot vừa tạo
 2. Gửi bất kỳ tin nhắn: "hello"
@@ -333,6 +358,7 @@ View details: https://uptimerobot.com/...
 ```
 
 **Step 3:** Add vào UptimeRobot
+
 ```
 Type: Telegram
 Bot Token: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
@@ -343,6 +369,7 @@ Chat ID: 123456789
 **4.4. Add Slack Alert (Optional - For Team)**
 
 Nếu team dùng Slack:
+
 ```
 Type: Slack
 Webhook URL: (lấy từ Slack Incoming Webhooks)
@@ -368,6 +395,7 @@ Re-alert if monitor is still down after: 30 minutes
 ```
 
 **Giải thích:**
+
 - Nếu service down quá 30 phút → Gửi alert NỮA
 - Nhắc nhở team nếu quên fix
 - Không spam quá nhiều (không gửi mỗi 5 phút)
@@ -408,6 +436,7 @@ https://jft-status.uptimerobot.com
 ```
 
 **Sử dụng:**
+
 - Public status page → User có thể check
 - Thêm vào footer website: "System Status"
 - Share với khách hàng khi có incident
@@ -417,6 +446,7 @@ https://jft-status.uptimerobot.com
 ## **✅ VERIFICATION CHECKLIST**
 
 ### **Monitor Setup:**
+
 - [ ] Backend health monitor created (https://backend.vjlink-edu.online/health)
 - [ ] Frontend monitors created (vjlink-edu.online, app.vjlink-edu.online)
 - [ ] Keyword "ok" configured for backend monitor
@@ -424,12 +454,14 @@ https://jft-status.uptimerobot.com
 - [ ] Response time < 2 seconds
 
 ### **Alert Setup:**
+
 - [ ] Email alert contact added
 - [ ] Telegram alert added (optional)
 - [ ] Test alert received (click "Force Check" → should get notification)
 - [ ] Alert frequency configured (30 min re-alert)
 
 ### **Status Page:**
+
 - [ ] Public status page created
 - [ ] All monitors displayed
 - [ ] Status page link accessible
@@ -442,22 +474,26 @@ https://jft-status.uptimerobot.com
 ### **Test 1: Force Down**
 
 **Cách test:**
+
 ```bash
 # Stop backend container
 docker stop jft-backend
 ```
 
 **Kỳ vọng:**
+
 1. Sau 5-10 phút → UptimeRobot phát hiện DOWN
 2. Nhận email/Telegram alert
 3. Status page hiển thị "DOWN" màu đỏ
 
 **Restart:**
+
 ```bash
 docker start jft-backend
 ```
 
 **Kỳ vọng:**
+
 1. Sau 5 phút → UptimeRobot phát hiện UP
 2. Nhận email/Telegram "Service is back UP"
 3. Status page hiển thị "UP" màu xanh
@@ -467,6 +503,7 @@ docker start jft-backend
 ### **Test 2: Manual Alert Test**
 
 **Trong UptimeRobot Dashboard:**
+
 1. Click monitor name
 2. Click **"Force Check"** button
 3. Should receive test notification
@@ -476,6 +513,7 @@ docker start jft-backend
 ### **Test 3: Response Time Check**
 
 **Benchmark health endpoint:**
+
 ```bash
 # Test from local
 time curl https://backend.vjlink-edu.online/health
@@ -485,6 +523,7 @@ real    0m0.234s
 ```
 
 **Trong UptimeRobot:**
+
 - View monitor details
 - Check "Average Response Time"
 - Should be < 1 second
@@ -502,16 +541,18 @@ real    0m0.234s
 ```
 
 **Tại sao?**
+
 - `/health` UP không đảm bảo login working
 - Database có thể down nhưng `process.uptime()` vẫn return
 
 **Improve health check:**
+
 ```typescript
 @Get('health')
 async checkHealth() {
   // Check DB connection
   const dbCheck = await this.prisma.$queryRaw`SELECT 1`;
-  
+
   return {
     status: 'ok',
     database: dbCheck ? 'connected' : 'error',
@@ -525,11 +566,13 @@ async checkHealth() {
 ### **2. Set Up Maintenance Windows**
 
 **Khi nào dùng?**
+
 - Deploy production (tránh alert spam)
 - VPS maintenance (known downtime)
 - Database migration (planned downtime)
 
 **Cách setup:**
+
 ```
 Dashboard → Monitor → "..." menu → "Create Maintenance"
 Duration: 1 hour
@@ -537,6 +580,7 @@ Reason: "Production deployment"
 ```
 
 **Effect:**
+
 - Không gửi alerts trong maintenance window
 - Status page hiển thị "Under Maintenance"
 
@@ -545,6 +589,7 @@ Reason: "Production deployment"
 ### **3. Monitor SSL Certificate Expiry**
 
 **Add monitor:**
+
 ```
 Type: HTTP(s)
 URL: https://backend.vjlink-edu.online
@@ -553,6 +598,7 @@ Alert before: 7 days
 ```
 
 **Tại sao?**
+
 - Let's Encrypt auto-renew có thể fail
 - Alert trước 7 ngày → kịp fix
 - Tránh HTTPS down đột ngột
@@ -562,11 +608,13 @@ Alert before: 7 days
 ### **4. Track Uptime SLA**
 
 **Industry standard:**
+
 - **99.9% uptime** = 43.8 minutes downtime/month (Good)
 - **99.95% uptime** = 21.9 minutes downtime/month (Excellent)
 - **99.99% uptime** = 4.38 minutes downtime/month (World-class)
 
 **Check trong UptimeRobot:**
+
 ```
 Dashboard → Monitor → "Uptime"
 - Last 24 hours: 100%
@@ -575,6 +623,7 @@ Dashboard → Monitor → "Uptime"
 ```
 
 **Report to management:**
+
 ```
 Monthly Report:
 - Total downtime: 32 minutes
@@ -588,6 +637,7 @@ Monthly Report:
 ### **5. Integrate with Incident Management**
 
 **Workflow:**
+
 ```
 UptimeRobot Alert
     ↓
@@ -613,6 +663,7 @@ Prevent recurrence
 **Possible reasons:**
 
 **1. Firewall blocking UptimeRobot IPs**
+
 ```bash
 # Check VPS firewall
 sudo iptables -L | grep 3000
@@ -622,6 +673,7 @@ sudo iptables -L | grep 3000
 ```
 
 **2. Rate limiting blocking UptimeRobot**
+
 ```typescript
 // Make sure health endpoint has @SkipThrottle
 @SkipThrottle()
@@ -630,6 +682,7 @@ async checkHealth() { ... }
 ```
 
 **3. SSL certificate issues**
+
 ```bash
 # Check cert
 curl -vI https://backend.vjlink-edu.online/health
@@ -639,6 +692,7 @@ curl -vI https://backend.vjlink-edu.online/health
 ```
 
 **4. Response too slow (timeout)**
+
 ```bash
 # Check response time
 time curl https://backend.vjlink-edu.online/health
@@ -651,16 +705,19 @@ time curl https://backend.vjlink-edu.online/health
 ### **Not receiving email alerts**
 
 **1. Check spam folder**
+
 - UptimeRobot emails can go to spam
 - Mark as "Not Spam"
 
 **2. Verify alert contact**
+
 ```
 My Settings → Alert Contacts
 Check: Email verified ✅
 ```
 
 **3. Test alert manually**
+
 ```
 Monitor → Force Check
 Should receive test email
@@ -670,12 +727,13 @@ Should receive test email
 
 ### **Response time too high**
 
-**Normal:** < 500ms  
-**Acceptable:** 500ms - 2s  
-**Slow:** 2s - 10s  
-**Problem:** > 10s  
+**Normal:** < 500ms
+**Acceptable:** 500ms - 2s
+**Slow:** 2s - 10s
+**Problem:** > 10s
 
 **Investigate:**
+
 ```bash
 # Check server load
 ssh vps
@@ -709,6 +767,7 @@ Include:
 ```
 
 **Sample report:**
+
 ```
 JFT Platform - Weekly Report (Feb 22-28, 2026)
 
@@ -737,12 +796,14 @@ Average Response Time:
 ## **🎯 PRODUCTION CHECKLIST**
 
 ### **Essential (Must Have):**
+
 - [ ] Backend /health monitor setup
 - [ ] Email alert configured
 - [ ] Monitor showing "UP" status
 - [ ] Test alert received successfully
 
 ### **Recommended:**
+
 - [ ] Frontend monitors setup
 - [ ] Telegram alert configured
 - [ ] Public status page created
@@ -750,6 +811,7 @@ Average Response Time:
 - [ ] Maintenance window process documented
 
 ### **Advanced:**
+
 - [ ] Weekly uptime reports enabled
 - [ ] Multiple alert contacts (team)
 - [ ] Custom status page with branding
@@ -778,11 +840,12 @@ After UptimeRobot setup:
 
 ---
 
-**Status:** Ready for implementation  
-**Estimated Setup Time:** 20 minutes  
-**Maintenance:** Zero (fully automated)  
+**Status:** Ready for implementation
+**Estimated Setup Time:** 20 minutes
+**Maintenance:** Zero (fully automated)
 
 ✅ **Sau khi setup xong, bạn sẽ:**
+
 - Nhận alert ngay khi service down
 - Track uptime percentage (SLA reporting)
 - Public status page cho users

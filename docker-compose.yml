@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:15
@@ -17,7 +15,9 @@ services:
       - jft-network
 
   backend:
-    build: ../jft/backend
+    build:
+      context: ../jft/backend
+      dockerfile: Dockerfile
     container_name: jft-backend
     restart: always
     mem_limit: 768m
@@ -33,12 +33,13 @@ services:
       - jft-network
     ports:
       - "3000:3000"
+
   frontend:
     build:
       context: ../jft/frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: "https://api.vjlink-edu.online"
+        NEXT_PUBLIC_API_URL: https://api.vjlink-edu.online
     container_name: jft-frontend
     restart: always
     mem_limit: 512m
@@ -46,6 +47,7 @@ services:
     depends_on:
       - backend
     environment:
+      NODE_ENV: production
       NODE_OPTIONS: --max-old-space-size=384
     networks:
       - jft-network
@@ -57,3 +59,4 @@ volumes:
 
 networks:
   jft-network:
+    driver: bridge
